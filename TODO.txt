@@ -1,0 +1,5 @@
+SETTINGS {
+
+    Make it possible for user to make custom words
+    Make it possible for user to choose duration of each round
+}
