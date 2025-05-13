@@ -83,18 +83,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
 
         case WM_CHAR: // Knapp tryckning
-            sprintf(keymsg, "WM_SYSKEYDOWN: 0x%c\n", wParam);
+            sprintf(keymsg, "%c\n", wParam);
             printf(keymsg);
            // OutputDebugString("Tjabbamoss");
         break;
-            
 
         case WM_COMMAND: // Här Skapas funktionerna till knapparna
             if (LOWORD(wParam) == ID_BUTTONEND ) {
                 DestroyWindow(hwnd);
             }
 
-        return 0;
+            //if (keymsg == chars[y][i]) {
+              //  SetTextColor(hdc, RGB(0, 255, 0));
+                //DrawTextA(hdc, fileContent.c_str(), 6, &rect, DT_VCENTER | DT_WORDBREAK);
+            //}
+
+        return 0;    
+
+        
         case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
@@ -120,7 +126,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             return 0;
         }
-
+        
         case WM_DESTROY:
             PostQuitMessage(0);
             return 0;

@@ -3,3 +3,9 @@ SETTINGS {
     Make it possible for user to make custom words
     Make it possible for user to choose duration of each round
 }
+
+PLAY {
+    Make it possible for user to input text
+    Make it so it corrects the checks if input is true to text
+    Make it 
+}
