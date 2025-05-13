@@ -85,7 +85,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_CHAR: // Knapp tryckning
             sprintf(keymsg, "WM_SYSKEYDOWN: 0x%c\n", wParam);
             printf(keymsg);
-           // OutputDebugString("Tjabbamos");
+           // OutputDebugString("Tjabbamoss");
         break;
             
 
