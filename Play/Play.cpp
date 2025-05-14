@@ -9,13 +9,21 @@
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
+int Textpos = 0;
+
 std::string fileContent;
-std::string chars[100][100];
+std::string line;
+std::string chars;
+
+std::string Correct = "Correct"; // Green 
+std::string False = "False"; // Red
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int nCmdShow)
 {
     // Register the window class.
     const char CLASS_NAME[] = "BlankWinForm";
+
 
     WNDCLASS wc = {0};
 
@@ -48,6 +56,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int nCmdShow)
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
+    
+
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0)) {
         TranslateMessage(&msg);
@@ -70,9 +80,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 std::string line;
                 while (std::getline(file, line)) {
                     fileContent += line + "\n";
-                    for(int i = 0; i < line.length(); i++) {
-                        chars[y][i] = line[i];
-                    } y++;
+                    chars = line;
                 }
             }
 
@@ -83,8 +91,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
 
         case WM_CHAR: // Knapp tryckning
-            sprintf(keymsg, "%c\n", wParam);
-            printf(keymsg);
+            if (chars[Textpos++] == wParam){
+                Correct = "Hey";
+                False += " ";
+                printf("Correct\n");
+            } else {
+                Correct += " ";
+                False += "Hey";
+                printf("False\n");
+            }
+
+
+            SendMessage(hwnd, WM_PAINT, 0, 0);
            // OutputDebugString("Tjabbamoss");
         break;
 
@@ -98,29 +116,51 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 //DrawTextA(hdc, fileContent.c_str(), 6, &rect, DT_VCENTER | DT_WORDBREAK);
             //}
 
-        return 0;    
+        return 0;
 
+        case WM_SETFONT:
+
+        return 0;
+
+        case WM_GETFONT:
+
+        return 0;
         
         case WM_PAINT: {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
+            
+
+            HFONT hFont = CreateFont (15, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, ANSI_CHARSET, 
+        OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
+        DEFAULT_PITCH | FF_DONTCARE, TEXT("Consolas"));
+
+            auto hOldFont = (HFONT) SelectObject(hdc, hFont);
 
             SetTextColor(hdc, RGB(226, 165, 40));
             SetBkMode(hdc, TRANSPARENT);
             RECT rect;
             GetClientRect(hwnd, &rect);
 
-            DrawTextA(hdc, fileContent.c_str(), -1, &rect, DT_VCENTER | DT_WORDBREAK);
+            DrawTextA(hdc, fileContent.c_str(), -1, &rect, DT_VCENTER | DT_WORDBREAK); // Yellow
+            printf(False.c_str());
+            False = "AAA";
             
-
-            //EndPaint(hwnd, &ps);
             rect.top = 0;
             SetTextColor(hdc, RGB(255, 0, 0));
-            DrawTextA(hdc, fileContent.c_str(), 6, &rect, DT_VCENTER | DT_WORDBREAK);
-
+            DrawTextA(hdc, False.c_str(), -1, &rect, DT_VCENTER | DT_WORDBREAK); // Red
+            
             rect.top = 5;
             SetTextColor(hdc, RGB(0, 255, 0));
-            DrawTextA(hdc, fileContent.c_str(), 3, &rect, DT_VCENTER | DT_WORDBREAK);
+            DrawTextA(hdc, Correct.c_str(), -1, &rect, DT_VCENTER | DT_WORDBREAK); // Green
+
+            SelectObject(hdc, hOldFont);
+            DeleteObject(hFont);
+        
+            
+            EndPaint(hwnd, &ps);
+
+
 
 
 
