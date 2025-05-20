@@ -15,8 +15,8 @@ std::string fileContent;
 std::string line;
 std::string chars;
 
-std::string Correct = "Correct"; // Green 
-std::string False = "False"; // Red
+std::string Correct = ""; // Green 
+std::string False = ""; // Red
 
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int nCmdShow)
@@ -91,30 +91,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
 
         case WM_CHAR: // Knapp tryckning
-            if (chars[Textpos++] == wParam){
-                Correct = "Hey";
+            if (chars[Textpos] == wParam) {
+                Correct += chars[Textpos];
                 False += " ";
-                printf("Correct\n");
             } else {
                 Correct += " ";
-                False += "Hey";
-                printf("False\n");
+                False += chars[Textpos];
             }
+            Textpos++;
 
+            InvalidateRect(hwnd, NULL, TRUE); // Uppdaterar fönstret, så att den overlapar det svar användaren skriver.
 
             SendMessage(hwnd, WM_PAINT, 0, 0);
-           // OutputDebugString("Tjabbamoss");
         break;
 
         case WM_COMMAND: // Här Skapas funktionerna till knapparna
             if (LOWORD(wParam) == ID_BUTTONEND ) {
                 DestroyWindow(hwnd);
             }
-
-            //if (keymsg == chars[y][i]) {
-              //  SetTextColor(hdc, RGB(0, 255, 0));
-                //DrawTextA(hdc, fileContent.c_str(), 6, &rect, DT_VCENTER | DT_WORDBREAK);
-            //}
 
         return 0;
 
@@ -131,7 +125,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             HDC hdc = BeginPaint(hwnd, &ps);
             
 
-            HFONT hFont = CreateFont (15, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, ANSI_CHARSET, 
+            HFONT hFont = CreateFont (20, 0, 0, 0, FW_DONTCARE, FALSE, FALSE, FALSE, ANSI_CHARSET, 
         OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, 
         DEFAULT_PITCH | FF_DONTCARE, TEXT("Consolas"));
 
@@ -139,30 +133,27 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             SetTextColor(hdc, RGB(226, 165, 40));
             SetBkMode(hdc, TRANSPARENT);
-            RECT rect;
+            RECT rect = rect;
+            rect.top = 0;
+
             GetClientRect(hwnd, &rect);
 
             DrawTextA(hdc, fileContent.c_str(), -1, &rect, DT_VCENTER | DT_WORDBREAK); // Yellow
-            printf(False.c_str());
-            False = "AAA";
             
-            rect.top = 0;
+            RECT rectFalse = rect;
+            rectFalse.top = 0;
             SetTextColor(hdc, RGB(255, 0, 0));
-            DrawTextA(hdc, False.c_str(), -1, &rect, DT_VCENTER | DT_WORDBREAK); // Red
+            DrawTextA(hdc, False.c_str(), -1, &rectFalse, DT_VCENTER | DT_WORDBREAK); // Red
             
-            rect.top = 5;
+            RECT rectCorrect = rect;
+            rectCorrect.top = 0;
             SetTextColor(hdc, RGB(0, 255, 0));
-            DrawTextA(hdc, Correct.c_str(), -1, &rect, DT_VCENTER | DT_WORDBREAK); // Green
+            DrawTextA(hdc, Correct.c_str(), -1, &rectCorrect, DT_VCENTER | DT_WORDBREAK); // Green
 
             SelectObject(hdc, hOldFont);
             DeleteObject(hFont);
-        
-            
+                   
             EndPaint(hwnd, &ps);
-
-
-
-
 
             return 0;
         }
@@ -173,3 +164,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     }
     return DefWindowProc(hwnd, msg, wParam, lParam);
 }
+
+
+// Make the Correct n False character line up with the Textpos,
+// Make a timer
+// Make it summarize when timer is done,
+// Make the words random scrambeld everytime user starts a game.
